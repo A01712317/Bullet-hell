@@ -28,11 +28,14 @@ public class PlayerController : MonoBehaviour
 
     public Transform firePoint; // punto desde donde dispara el jugador
 
-    
+
+    public AudioClip ShotClip;     // sonido de destrucción
+    private AudioSource audioSource;
 
     private void Start()
     {
         currentLives = maxLives;
+        audioSource = GetComponent<AudioSource>(); // inicializa el AudioSource
     }
 
     void LateUpdate()
@@ -69,6 +72,7 @@ public class PlayerController : MonoBehaviour
         if(Input.GetKeyDown(KeyCode.Space))
         {
             FirePlayerBullet();
+            PlaySound(ShotClip);
         }
     }
 
@@ -127,6 +131,14 @@ public class PlayerController : MonoBehaviour
             b.bulletType = Bullet.BulletType.Player;   // tipo de bala
             b.SetShootDirection(Vector2.up);           // dirección hacia arriba
             bullet.tag = "BulletP";
+        }
+    }
+
+    void PlaySound(AudioClip clip)
+    {
+        if (clip != null && audioSource != null)
+        {
+            audioSource.PlayOneShot(clip);
         }
     }
 

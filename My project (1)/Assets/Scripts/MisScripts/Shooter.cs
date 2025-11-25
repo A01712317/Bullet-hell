@@ -19,6 +19,17 @@ public class EnemyShooter : MonoBehaviour
     public int maxLives = 5;
     private int currentLives;
 
+
+    public AudioClip deathClip;     // sonido de destrucción
+    public AudioClip damageClip;     // sonido de destrucción
+    private AudioSource audioSource;
+
+    void Start()
+    {
+        currentLives = maxLives;
+        audioSource = GetComponent<AudioSource>(); // inicializa el AudioSource
+    }
+
     void Update()
     {
         fireTimer += Time.deltaTime;
@@ -169,23 +180,34 @@ public class EnemyShooter : MonoBehaviour
     {
         currentLives--;
 
+        PlaySound(damageClip);
+
         // Si ya no quedan vidas, destruye la nave
         if (currentLives <= 0)
         {
+            PlaySound(deathClip);
             Destroy(gameObject);
         }
     }
 
     void ChangePattern()
     {
-        // Alterna en ciclo recto → spread → homing → recto
-        if (currentType == Bullet.BulletType.Flower)
+        if (currentType == Bullet.BulletType.Straight)
+            currentType = Bullet.BulletType.CurvedSine;
+
+        else if (currentType == Bullet.BulletType.CurvedSine)
             currentType = Bullet.BulletType.Flower;
+
         else if (currentType == Bullet.BulletType.Flower)
-            currentType = Bullet.BulletType.Flower;
-        else if (currentType == Bullet.BulletType.Flower)
-            currentType = Bullet.BulletType.Flower;
-        else
-            currentType = Bullet.BulletType.Flower;
+            currentType = Bullet.BulletType.Straight; // vuelve al inicio
+    }
+
+
+    void PlaySound(AudioClip clip)
+    {
+        if (clip != null && audioSource != null)
+        {
+            audioSource.PlayOneShot(clip);
+        }
     }
 }
